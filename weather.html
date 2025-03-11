@@ -1,0 +1,158 @@
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather Forecast</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Sky Savvy</h1>
+        <p>WELCOME!</p>
+        <input type="text" id="city" placeholder="Enter city name">
+        <button onclick="getWeather()">Get Weather forecast</button>
+        <div id="weather-info"></div>
+    </div>
+    
+    <script>
+            function getWeather() {
+                const city = document.getElementById('city').value;
+            if (!city) return;
+            
+            const apiKey = '4851d9dc8f10f03def5072bcbb190082';
+            const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}`;
+            
+            fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                if (data.cod !== 200) {
+                    document.getElementById('weather-info').innerHTML = `<p>${data.message}</p>`;
+                    return;
+                    }
+                    
+                    const iconUrl = `http://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`;
+                    
+                    document.getElementById('weather-info').innerHTML = `
+                        <h2>${data.name}, ${data.sys.country}</h2>
+                        <img src="${iconUrl}" alt="Weather icon">
+                        <p>Temperature: ${data.main.temp}°C</p>
+                        <p>Weather: ${data.weather[0].description}</p>
+                        <p>Humidity: ${data.main.humidity}%</p>
+                        <p>Wind Speed: ${data.wind.speed} m/s</p>
+                        `;
+                        const weatherCondition = data.weather[0].main.toLowerCase();
+                        const body = document.body;
+                        body.classList.remove("sunny", "cloudy", "rainy", "default");
+                        if (weatherCondition.includes("clear")){
+                            body.classList.add("sunny");
+                        }else if (weatherCondition.includes("clouds")){
+                            body.classList.add("cloudy");
+                        }else if (weatherCondition.includes("rain")){
+                            body.classList.add("rainy");
+                        }else{
+                            body.classList.add("default");
+                        }
+                    
+                })
+                .catch(error => {
+                    document.getElementById('weather-info').innerHTML = '<p>Error fetching data</p>';
+                });
+            }
+            document.querySelector("p").style.color="white";
+            getWeather("Aba");
+            setInterval(getWeather, 10000);    
+            </script>
+</body>
+</html>
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background: url('sky img.jpg') no-repeat center center fixed;
+        background-size: cover;
+        text-align: center;
+        padding: 50px;
+        /* transition: background 1s ease-in-out; */
+    }
+    h1 {
+        color:white;
+        text-align:center;
+    }
+    p{color:white;
+    }
+    .container {
+        background: rgba(91, 187, 252, 0.8);
+        padding: 20px;
+        border-radius: 10px;
+        display: inline-block;        
+    }
+    input, button {
+        padding: 10px;
+        margin: 10px;
+        border: none;
+        border-radius: 5px;
+    }
+    button {
+        background: #3498db;
+        color: white;
+        cursor: pointer;
+    }
+    button:hover {
+        background: #2980b9;
+    }
+    #weather-info {
+        margin-top: 20px;
+    }
+    img {
+        width: 100px;
+        height: 100px;
+    }
+    /* .weather-bg{
+        transition: background 1s ease-in-out;
+    } */
+    .sunny{
+        background-size: 50%; 
+        /* background: radial-gradient(circle, rgb(243, 243, 22), rgb(250, 251, 252)); */
+        background: url('sunny3.jpg') no-repeat center center fixed;
+        background-size: cover;
+        position: relative;
+        overflow: hidden;
+        transition: background 1s ease-in-out;
+    }
+    .rainy{
+        /* background: linear-gradient(to bottom, #6dd5ed, #2193b0); */
+        background: url('rain.jpg') no-repeat center center fixed;
+        background-size: cover;
+        position: relative;
+        overflow: hidden;
+        transition: background 1s ease-in-out;
+    }
+    .cloudy {
+        /* background: linear-gradient( to bottom, #67e6f7, #d3f7f4); */
+        background: url('sky-img1.jpg') no-repeat center center fixed;
+        background-size: cover;
+        position: relative;
+        overflow: hidden;
+        transition: background 1s ease-in-out;
+    }
+    .cloudy::before {
+        content:"";
+        position: absolute;
+        top: 10%;
+        left: 20%;
+        width: 200px;
+        height: 100px;
+        background: #e4e7e7bd; 
+        border-radius: 50%;
+        box-shadow: 50px 20px 50px rgb(151, 152, 153);
+        transition: background 1s ease-in-out;
+        animation: move-clouds 10s infinite linear;
+    }
+    @keyframes move-clouds {
+        from {transform: translateX(-100%);}
+        to { transform: translateX(450%);}
+    }
+    .default {background: linear-gradient(to right, #6dd5ed, #2193b0);
+    }
+</style>
